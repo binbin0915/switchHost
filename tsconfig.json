@@ -1,0 +1,29 @@
+{
+    "compilerOptions": {
+      //"module": "commonjs",
+      //"noImplicitAny": true, 
+      "module": "ESNext",
+      "outDir": "./dist/",
+      "target": "es6",
+      "jsx": "react",
+      "sourceMap": true,
+      "allowSyntheticDefaultImports": true,
+      "moduleResolution": "node",
+      "experimentalDecorators": true,
+      "baseUrl": "./",
+      "paths": {
+          "@apiMap": [
+              "map/api.tsx"
+          ],
+          "@utils/*": ["utils/*"],
+          "@widgets/*": ["widgets/*"]
+      },
+    },
+    "include": [
+        "./entry/**/*",
+        "./types/declaration.d.ts",
+        "./types/isomorphic-style-loader/*",
+        "**/*"
+    ],
+    "exclude": [ "node_modules" ]
+}

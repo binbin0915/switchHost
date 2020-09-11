@@ -11,7 +11,7 @@ function createWindow () {
   })
 
   // 并且为你的应用加载index.html
-  win.loadFile('index2.html')
+  win.loadFile('app/index.html')
 
   // 打开开发者工具
   win.webContents.openDevTools()

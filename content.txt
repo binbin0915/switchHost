@@ -1,25 +1,5 @@
-#127.0.0.1	mobile.yangkeduo.com
-#127.0.0.1	m.hutaojie.com
-127.0.0.1	domino.htj.pdd.net
-127.0.0.1	new.cart.com
-127.0.0.1	promotion-admin.corp.yiran.com
-127.0.0.1	promotion-admin.yangkeduo.com
-127.0.0.1       promotion-admin.hutaojie.com
-0.0.0.0 	account.jetbrains.com
-127.0.0.1   	panduoduo.yangkeduo.com
-127.0.0.1       m-staging.yangkeduo.com
-127.0.0.1       mrec.htj.pdd.net
-127.0.0.1       mc-fresh.htj.pdd.net
-127.0.0.1       ddmc-fresh.htj.pdd.net
-127.0.0.1	domino.pdd.net
-#172.20.57.181   panduoduo.yangkeduo.com
 
 #127.0.0.1	tangshisanbaishou.xyz
+127.0.0.1	xxxx.yyyy.com
+127.0.0.1	rrr.gov.cn
 
-#172.20.33.5 	apiv2.yangkeduo.com
-#172.20.33.5 	apiv3.yangkeduo.com
-#172.20.33.5 	apiv4.yangkeduo.com
-
-127.0.0.1	g.w.com
-#127.0.0.1	149.129.83.246
-172.20.75.161	vgunxpkt.com

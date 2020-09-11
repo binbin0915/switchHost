@@ -1,9 +1,10 @@
 const path = require('path');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const tsImportPluginFactory = require("ts-import-plugin");
-const { isDev } = require('./constants');
 const webpack = require('webpack');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+
+const isDev = true;
 
 module.exports = {
     context: path.resolve(__dirname),
@@ -12,8 +13,15 @@ module.exports = {
     },
     output: {
         filename: '[name].bundle.js',
-        path: path.resolve(__dirname, 'dist/cloudDisk'),
-        publicPath: path.resolve(__dirname, 'dist/cloudDisk')
+        path: path.resolve(__dirname, 'app'),
+        publicPath: path.resolve(__dirname, 'app')
+    },
+    //  watch内容
+    watch: true,
+    watchOptions: {
+      poll: 1000, // 每秒询问多少次
+      aggregateTimeout: 500,  //防抖 多少毫秒后再次触发
+      ignored: /node_modules/ //忽略时时监听
     },
     optimization: {
         splitChunks: {
@@ -34,18 +42,14 @@ module.exports = {
             filename: "[name].css",
             chunkFilename: "[name].css"
         }),
-        //  使用DefinePlugin定义变量的时候，一定要stringfy,否则打包后会理解为变量而不是字符串
-        new webpack.DefinePlugin({
-            'ENVIRONMENT': JSON.stringify(isDev ? 'DEV' : 'PRO')
-        }),
         //  moment包太大了，只使用中文包
         new webpack.ContextReplacementPlugin(
             /moment[/\\]locale$/,
             /zh-cn/,
         ),
-        new BundleAnalyzerPlugin({
-            analyzerPort: 8899
-        })
+        // new BundleAnalyzerPlugin({
+        //     analyzerPort: 8899
+        // })
     ],
     module: {
         rules: [
@@ -86,7 +90,9 @@ module.exports = {
                 test: /\.(css|scss)$/,
                 exclude: /node_modules/,
                 use: [
-                    'isomorphic-style-loader',
+                    //  'isomorphic-style-loader',
+                    //  'css-loader',
+                    MiniCssExtractPlugin.loader,  //自动提取出css
                     {
                         loader: 'typings-for-css-modules-loader',
                         options: {
@@ -145,5 +151,9 @@ module.exports = {
             '.ts', '.tsx', '.js', '.json'
         ]
     },
+    // node: {
+    //     fs: true,
+    //     path: true
+    // },
     mode: isDev ? "development" : "production",
 }

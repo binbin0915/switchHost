@@ -3,7 +3,7 @@
       //"module": "commonjs",
       //"noImplicitAny": true, 
       "module": "ESNext",
-      "outDir": "./dist/",
+      "outDir": "./app/",
       "target": "es6",
       "jsx": "react",
       "sourceMap": true,
@@ -20,9 +20,8 @@
       },
     },
     "include": [
-        "./entry/**/*",
+        "./src/**/*",
         "./types/declaration.d.ts",
-        "./types/isomorphic-style-loader/*",
         "**/*"
     ],
     "exclude": [ "node_modules" ]

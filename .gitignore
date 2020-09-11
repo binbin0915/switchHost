@@ -1,3 +1,8 @@
 .awcache
 node_modules
 dist
+package-lock.json
+app/app.css
+app/app.bundle.js
+app/common.css
+app/common.bundle.js

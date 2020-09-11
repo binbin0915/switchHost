@@ -22,6 +22,7 @@ const yyy = xxx.map(item => {
         return {
             isValid,
             able: first.length === 0,
+            ip: targetIps[0],
             domain: splitRes[1].split('#')[0].trim()
         }
     } else {

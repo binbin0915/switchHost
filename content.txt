@@ -1,5 +1,3 @@
-
-#127.0.0.1	tangshisanbaishou.xyz
+#127.0.0.1	tangshisanbaishou.xyz #我是注释
 127.0.0.1	xxxx.yyyy.com
 127.0.0.1	rrr.gov.cn
-

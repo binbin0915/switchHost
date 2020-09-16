@@ -1,3 +1,21 @@
 .name {
     color: red;
 }
+
+.formWrapper {
+    display: inline-block;
+}
+
+.formWrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.iconGroup {
+    margin-bottom: 24px;
+}
+
+.domainAndIp {
+    margin-left: 15px;
+}

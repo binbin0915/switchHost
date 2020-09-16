@@ -8,6 +8,11 @@ const regx = /((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\
 // const res = oldContent.match(regx);
 // console.log(res);
 
+
+const childProcess = require('child_process')
+const branch = childProcess.execSync('git rev-parse --abbrev-ref HEAD').toString().replace(/\s+/, '')
+console.log(branch);
+
 //  提取所有行
 const xxx = oldContent.split('\r\n');
 //  结果的结构体数组

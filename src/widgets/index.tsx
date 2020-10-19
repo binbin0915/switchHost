@@ -2,7 +2,9 @@ import React, { useState, useEffect, useReducer } from 'react';
 import * as s from './index.css';
 const fs = window.require('fs');
 const path = window.require('path');
-import { Form, Input, Switch, Modal, message } from 'antd';
+import { Form, Input, Switch, Modal, message, Upload, Button } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
+import { UploadFile, UploadChangeParam } from 'antd/lib/upload/interface';
 import { EditOutlined, DeleteOutlined, FileAddOutlined } from '@ant-design/icons';
 
 const SPLIT_CHAR = '\r\n';
@@ -13,6 +15,7 @@ const ADD_CONFIG = 'add';
 interface detailObj {
     isValid: boolean,
     index: number,
+    objIndex: number,
     able: boolean,
     ip: string,
     domain: string,
@@ -29,15 +32,29 @@ interface modalStatus {
     curIndex?: number,
 }
 
+interface myUpFile extends File {
+    path?: string;
+}
+
 const layout = {
     labelCol: { span: 4 },
     wrapperCol: { span: 16 },
 };
 
+const emptyIpDomainObj = {
+    ip: '',
+    domain: ''
+}
+
 const regx = /((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}/g;
 const singleReg = /^((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}$/g;
+const CONFIG_PATH = 'configPath';
 
 function Panel() {
+    //  读取配置文件路径
+    //  const configPath = 'C:\\Windows\\System32\\drivers\\etc\\hosts';
+    const configPath = path.resolve('D:\\self\\eletron\\testApp', "content.txt");
+
     function objReducer(state: T_infoObj, action: T_infoObj) {
         //  以前没有空对象，react还是以为是原始对象
         return Object.assign({}, state, action);
@@ -55,14 +72,10 @@ function Panel() {
         modalType: EDIT_CONFIG,
         curIndex: 0,
     } as modalStatus);
+    //  path.resolve('D:\\self\\eletron\\testApp', "content.txt");
     useEffect(() => {
-        const TEXT_PATH = path.resolve('D:\\self\\eletron\\testApp', "content.txt"); // 大文件存储目录
-
+        const TEXT_PATH = configPath; // 大文件存储目录
         const oldContent = fs.readFileSync(TEXT_PATH, 'utf-8');
-        //  提取所有ip地址
-        // const res = oldContent.match(regx);
-        // console.log(res);
-
         //  提取所有行
         const xxx = oldContent.split(SPLIT_CHAR);
         //  结果的结构体数组
@@ -77,6 +90,7 @@ function Panel() {
                 return {
                     isValid,
                     index,
+                    objIndex: 0,
                     able: first.length === 0,
                     ip: targetIps[0],
                     domain: splitRes[1].split('#')[0].trim()
@@ -90,17 +104,18 @@ function Panel() {
         })
         setInfo({
             textLines: xxx,
-            detailObjArr: yyy.filter(item => item.isValid) as Array<detailObj>
+            detailObjArr: yyy.filter(item => item.isValid).map((item, index) => Object.assign(item, { objIndex: index })) as Array<detailObj>
         })
     }, []);
     function showInfo() {
         console.log(infoObj);
     }
-    function changeSwitch(item, value) {
-        const { index } = item;
+    function changeSwitch(item: detailObj, value) {
+        const { index, objIndex } = item;
         let finalStr = '';
         let cpyLines = infoObj.textLines.slice(0);
         const allLength = infoObj.textLines.length;
+        //  更新原始string
         finalStr = infoObj.textLines.reduce((old, newItem, sindex) => {
             let newLine = newItem;
             if (sindex === index) {
@@ -111,21 +126,29 @@ function Panel() {
                 newLine = newLine + SPLIT_CHAR;
             }
             return old + newLine;
-        }, '')
+        }, '');
+        //  更新objArr
+        const cpObjArr = infoObj.detailObjArr.slice();
+        cpObjArr[objIndex].able = value;
         setInfo({
-            textLines: cpyLines
+            textLines: cpyLines,
+            detailObjArr: cpObjArr,
         })
         writeFile(finalStr);
     };
     function writeFile(content) {
-        fs.writeFileSync( path.resolve('D:\\self\\eletron\\testApp', "content.txt"), content);
+        fs.writeFileSync(configPath, content);
     }
     function validateNewObj(obj) {
         const { ip, domain } = obj;
         return domain && ip.match(singleReg);
     }
-    function deleteConfig(item: detailObj) {
-        const { index } = item;
+    async function handleChange(info: UploadChangeParam<UploadFile<any>>) {
+        const { file: { originFileObj } } = info;
+        const originFile = originFileObj as myUpFile;
+        localStorage.setItem(CONFIG_PATH, originFile.path)
+    }
+    function deleteConfig(index) {
         Modal.confirm({
             title: '删除配置',
             content: (
@@ -135,7 +158,7 @@ function Panel() {
             onOk() {
                 const copyLines = infoObj.textLines.slice();
                 const copyObjArray = infoObj.detailObjArr.slice();
-                copyLines.splice(index, 1);
+                copyLines.splice(infoObj.detailObjArr[index].index, 1);
                 copyObjArray.splice(index, 1);
                 writeFile(copyLines.join(SPLIT_CHAR));
                 setInfo({
@@ -145,13 +168,9 @@ function Panel() {
             }
         })
     }
-    let newObj = {
-        ip: '',
-        domain: ''
-    };
+    let newObj = emptyIpDomainObj;
     function changInfo(key, e) {
         newObj[key] = e.target.value;
-        console.log(newObj);
     }
     function handleOk() {
         if (!validateNewObj(newObj)) {
@@ -169,6 +188,7 @@ function Panel() {
                 index: newLines.length - 1,
                 able: true,
                 ip: newObj.ip,
+                objIndex: newObjArray.length,
                 domain: newObj.domain,
             })
 
@@ -179,7 +199,6 @@ function Panel() {
             const targetObj = newObjArray[index];
             Object.assign(targetObj, newObj);
         }
-        console.log(newLines, 222);
         writeFile(newLines.join(SPLIT_CHAR));
         setInfo({
             textLines: newLines,
@@ -210,9 +229,9 @@ function Panel() {
             onOk={handleOk}
             onCancel={handleCancel}
         >
-            <Form {...layout} initialValues={{ domain: newObj.domain, ip: newObj.ip }}>
+            <Form {...layout} key={JSON.stringify(newObj)} initialValues={{ domain: newObj.domain, ip: newObj.ip }}>
                 <FormItem label='域名' name='domain' rules={[{ required: true }]}>
-                    <Input onChange={changInfo.bind(null, 'domain')}/>
+                    <Input key={'domain'} onChange={changInfo.bind(null, 'domain')}/>
                 </FormItem>
                 <FormItem label='ip' name='ip' rules={[{ pattern: singleReg, message: '请输入正确的ip'}]}>
                     <Input onChange={changInfo.bind(null, 'ip')}/>
@@ -221,19 +240,32 @@ function Panel() {
         </Modal>;
     }
     return <div className={s.name}>
-        <div onClick={showInfo}>点我测试</div>
-        <FileAddOutlined onClick={showModalFuc.bind(null, ADD_CONFIG)}/>
+        {/* <div onClick={showInfo}>点我测试</div> */}
+        {/* <Upload
+            customRequest={() => {}}
+            onChange={handleChange}
+            showUploadList={false}
+        >
+            <Button>
+                <UploadOutlined />选择配置文件
+            </Button>
+        </Upload> */}
+        <div className={s.addWrapper}>
+            <div className={s.aWord}>新增配置</div><FileAddOutlined onClick={showModalFuc.bind(null, ADD_CONFIG)}/>
+        </div>
+
         {infoObj.detailObjArr.map((item, index) => {
             const { ip, domain, index: lineNum, able } = item;
             return (
                 <div key={index} className={s.formWrapper}>
-                    <FormItem label='开启映射' >
+                    <FormItem label={`${able ? '关闭' : '开启'}映射`} >
                             <Switch onChange={changeSwitch.bind(null, item)} defaultChecked={able}/>
                             <span className={s.domainAndIp}>{domain}: {ip}</span>
                     </FormItem>
                     <div className={s.iconGroup}>
                         <EditOutlined onClick={showModalFuc.bind(null, EDIT_CONFIG, index)}/>
-                        <DeleteOutlined onClick={deleteConfig.bind(null, item)}/>
+                        <div className={s.iSpan}/>
+                        <DeleteOutlined onClick={deleteConfig.bind(null, index)}/>
                     </div>
                 </div>
             );

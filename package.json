@@ -1,12 +1,14 @@
 {
-  "name": "testapp",
+  "name": "switch_host",
   "version": "1.0.0",
   "description": "app",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron .",
-    "build": "webpack --color --config webpack.config.js"
+    "start": "electron index",
+    "build": "webpack --color --config webpack.config.js",
+    "pack": "electron-builder",
+    "postinstall": "electron-builder install-app-deps"
   },
   "author": "",
   "license": "ISC",
@@ -20,6 +22,23 @@
     "react": "^16.8.3",
     "react-dom": "^16.8.3"
   },
+  "build": {
+		"appId": "com.wss.app",
+		"directories": {
+			"output": "build"
+		},
+		"win": {
+			"target": [
+				"nsis",
+				"zip"
+      ],
+      "icon": "icon.ico"
+		},
+		"files": [
+			"app/**/*",
+			"index.js"
+		]
+  },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/plugin-transform-runtime": "^7.3.4",
@@ -29,6 +48,7 @@
     "babel-plugin-import": "^1.13.0",
     "css-loader": "^0.28.11",
     "electron": "^9.2.1",
+    "electron-builder": "^22.8.1",
     "electron-rebuild": "^2.0.1",
     "less-loader": "^6.0.0",
     "mini-css-extract-plugin": "^0.4.5",

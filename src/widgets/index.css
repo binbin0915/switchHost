@@ -4,6 +4,7 @@
 
 .formWrapper {
     display: inline-block;
+    margin-bottom: -24px;
 }
 
 .formWrapper {
@@ -14,8 +15,26 @@
 
 .iconGroup {
     margin-bottom: 24px;
+    color:grey;
 }
 
 .domainAndIp {
     margin-left: 15px;
+}
+
+.addWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    color:#1890ff;
+}
+
+.aWord {
+    color: black;
+    margin-right: 20px;
+}
+
+.iSpan {
+    display: inline-block;
+    margin-right: 10px;
 }
